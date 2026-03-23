@@ -8,7 +8,11 @@ import (
 )
 
 func (c Client) ListLocations(url *string) (RespShallowLocations, error) {
-	res, err := http.Get(*url)
+	requestURL := "https://pokeapi.co/api/v2/location-area/"
+	if url != nil {
+		requestURL = *url
+	}
+	res, err := http.Get(requestURL)
 	if err != nil {
 		return RespShallowLocations{}, err
 	}
