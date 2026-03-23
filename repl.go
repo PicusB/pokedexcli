@@ -5,12 +5,20 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/PicusB/pokedex/internal/pokeapi"
 )
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(conf *config) error
+}
+
+type config struct {
+	pokeapiClient pokeapi.Client
+	nextURL       *string
+	previousURL   *string
 }
 
 func cleanInput(text string) []string {
@@ -27,7 +35,7 @@ func cleanInput(text string) []string {
 	return returnString
 }
 
-func startRepl() {
+func startRepl(conf *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -45,7 +53,7 @@ func startRepl() {
 			fmt.Printf("No command by the name of %s\n", commandName)
 			continue
 		}
-		command.callback()
+		command.callback(conf)
 	}
 }
 
@@ -60,6 +68,11 @@ func getCommands() map[string]cliCommand {
 			name:        "help",
 			description: "Provide information to user",
 			callback:    commandHelp,
+		},
+		"map": {
+			name:        "map",
+			description: "Displays the name of 20 locations in the Pokemon world",
+			callback:    commandMap,
 		},
 	}
 }
